@@ -20,7 +20,9 @@ export const startWorker = () => {
       connection: {
         host: 'localhost',
         port: 6379,
+        password: 'yourpassword',  // Add the Redis password here
       },
+
     }
   );
 

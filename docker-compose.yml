@@ -30,36 +30,49 @@ services:
       - postgres
     networks:
       - evolution-net
-    
-  # redis:
-  #   image: redis:latest
-  #   networks:
-  #     - evolution-net
-  #   container_name: redis
-  #   command: >
-  #     redis-server --port 6379 --appendonly yes
-  #   volumes:
-  #     - evolution_redis:/data
-  #   ports:
-  #     - 6379:6379
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    command: redis-server --port 6379 --appendonly yes --requirepass yourpassword
+    networks:
+      - evolution-net
+    volumes:
+      - evolution_redis:/data
+    ports:
+      - 6379:6379
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+    ports:
+      - 5672:5672   # RabbitMQ Port
+      - 15672:15672 # Management Port
+    networks:
+      - evolution-net
 
   evolution_api:
     image: atendai/evolution-api:v2.1.0
     depends_on:
       - postgres
+      - redis
+      - rabbitmq
     env_file:
       - .env
     ports:
       - 8080:8080
     networks:
       - evolution-net
-    restart: always  # Add this line to ensure it restarts automatically
+    restart: always
     command: tail -f /dev/null
 
 volumes:
   postgres_data:
   pgadmin_data:
-  # evolution_redis:
+  evolution_redis:
 
 networks:
   evolution-net:

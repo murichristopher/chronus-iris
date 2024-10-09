@@ -6,7 +6,8 @@ interface MessageParams {
 }
 
 export async function sendTextMessage({ message, number }: MessageParams) {
-  await axios.post("http://localhost:8080/message/sendText/MY_APP", {
+  console.log("NUMBER", number)
+  await axios.post("http://localhost:8080/message/sendText/MY_App", {
     number: number,
     text: message,
   }, {

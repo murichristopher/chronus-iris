@@ -12,7 +12,7 @@ async function addJobToQueue(data: { message: string }) {
 
 
 export function startRabbitListener() {
-  amqp.connect('amqp://localhost', (error0, connection) => {
+  amqp.connect('amqp://user:password@localhost', (error0, connection) => {
     if (error0) {
       throw error0;
     }
