@@ -21,79 +21,32 @@ async function testWorker() {
 testWorker();
 
 
-// import Fastify from 'fastify'
-// import { type FastifyInstance } from "fastify"
-// import { type RouteShorthandOptions } from 'fastify'
-// // import { Server, IncomingMessage, ServerResponse } from 'http'
+import Fastify from 'fastify'
+import { type FastifyInstance } from "fastify"
+import { type RouteShorthandOptions } from 'fastify'
+import { getContactsHandler } from "./src/controllers/contact-controller";
+import { getContactsOpts } from "./src/routes/contact-opts";
+import { getConnectHandler } from "./src/controllers/connect-controller";
+import { getConnectOpts } from "./src/routes/connect-opts";
 
-// const server: FastifyInstance = Fastify({
-//   logger: true
-// })
+const server: FastifyInstance = Fastify({
+  logger: true
+})
 
-// const opts: RouteShorthandOptions = {
-//   schema: {
-//     response: {
-//       200: {
-//         type: 'object',
-//         properties: {
-//           pong: {
-//             type: 'string'
-//           }
-//         }
-//       }
-//     }
-//   }
-// }
+server.get('/contacts', getContactsOpts, getContactsHandler);
+server.get('/instance_connect', getConnectOpts, getConnectHandler);
 
-// server.get('/ping', opts, async (request, reply) => {
-//   return { pong: 'it worked!' }
-// })
+const start = async () => {
+  try {
+    await server.listen({ port: 5678 })
 
-// server.route({
-//   method: 'GET',
-//   url: '/',
-//   schema: {
-//     querystring: {
-//       type: 'object',
-//       properties: {
-//         name: { type: 'string' }
-//       },
-//       required: ['name'],
-//     },
-//     response: {
-//       200: {
-//         type: 'object',
-//         properties: {
-//           hello: { type: 'string' }
-//         }
-//       }
-//     }
-//   },
-//   preHandler: async (request, reply) => {
-//   },
-//   handler: async (request, reply) => {
-//     const name = request.query.name;
+    const address = server.server.address()
+    const port = typeof address === 'string' ? address : address?.port
 
-//     // Exibe o request no console (opcional)
-//     console.log(request);
+  } catch (err) {
+    server.log.error(err)
+    process.exit(1)
+  }
+}
 
-//     // Retorna uma resposta personalizada usando o parâmetro 'name'
-//     return { hello: `Hello, ${name}!` };
-//   }
-// });
-
-
-// const start = async () => {
-//   try {
-//     await server.listen({ port: 3000 })
-
-//     const address = server.server.address()
-//     const port = typeof address === 'string' ? address : address?.port
-
-//   } catch (err) {
-//     server.log.error(err)
-//     process.exit(1)
-//   }
-// }
-
-// start()
+start()
